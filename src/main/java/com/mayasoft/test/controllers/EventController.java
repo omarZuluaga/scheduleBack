@@ -4,9 +4,10 @@ import com.mayasoft.test.controllers.VO.EventVO;
 import com.mayasoft.test.models.entities.Event;
 import com.mayasoft.test.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.function.EntityResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,18 +19,59 @@ public class EventController {
     private EventService eventService;
 
     @GetMapping
-    public List<EventVO> getEvents () {
+    public ResponseEntity<List<EventVO>> getEvents () {
 
-        return map(eventService.getEvents());
+        return ResponseEntity.ok().body(map(eventService.getEvents()));
     }
 
     @GetMapping("/{id}")
-    public EventVO getEventById (@PathVariable Long id) {
+    public ResponseEntity<EventVO> getEventById (@PathVariable Long id) {
         Event event = eventService.getEventById(id);
 
-        return map(event);
+        if(event == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok().body(map(event));
     }
 
+    @PostMapping
+    public ResponseEntity<String> saveEvent (@RequestBody EventVO eventVO){
+        Event event = new Event(eventVO.getStart(), eventVO.getEnd(), eventVO.getType(), eventVO.getType());
+        eventService.saveEvent(event);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateEvent(@PathVariable Long id, @RequestBody EventVO eventVO){
+        Event event = eventService.getEventById(id);
+
+        if(event == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        handleEventUpdate(event, eventVO);
+
+        eventService.updateEvent(event);
+
+        return ResponseEntity.noContent().build();
+
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteEvent(@PathVariable Long id){
+        eventService.deleteEvent(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    private void handleEventUpdate(Event event, EventVO eventVO) {
+        if (eventVO.getDescription() != null) event.setDescription(eventVO.getDescription());
+        if(eventVO.getEnd() != null) event.setEnd(eventVO.getEnd());
+        if(eventVO.getStart() != null) event.setStart(eventVO.getStart());
+        if(eventVO.getType() != null) event.setType(eventVO.getType());
+    }
 
 
     private EventVO map(Event event){
