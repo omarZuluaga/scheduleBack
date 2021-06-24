@@ -1,6 +1,6 @@
 package com.mayasoft.test.services;
 
-import com.mayasoft.test.entities.Instructor;
+import com.mayasoft.test.models.entities.Instructor;
 
 import java.util.List;
 

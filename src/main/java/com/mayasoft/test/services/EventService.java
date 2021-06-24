@@ -1,6 +1,6 @@
 package com.mayasoft.test.services;
 
-import com.mayasoft.test.entities.Event;
+import com.mayasoft.test.models.entities.Event;
 
 import java.util.List;
 

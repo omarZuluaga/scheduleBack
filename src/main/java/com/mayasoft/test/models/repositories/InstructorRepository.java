@@ -1,6 +1,6 @@
-package com.mayasoft.test.entities.repositories;
+package com.mayasoft.test.models.repositories;
 
-import com.mayasoft.test.entities.Instructor;
+import com.mayasoft.test.models.entities.Instructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

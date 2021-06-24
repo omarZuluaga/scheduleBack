@@ -1,7 +1,7 @@
 package com.mayasoft.test.services.implement;
 
-import com.mayasoft.test.entities.Instructor;
-import com.mayasoft.test.entities.repositories.InstructorRepository;
+import com.mayasoft.test.models.entities.Instructor;
+import com.mayasoft.test.models.repositories.InstructorRepository;
 import com.mayasoft.test.services.InstructorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

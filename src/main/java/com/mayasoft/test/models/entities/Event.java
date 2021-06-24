@@ -1,4 +1,4 @@
-package com.mayasoft.test.entities;
+package com.mayasoft.test.models.entities;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
