@@ -2,7 +2,9 @@ package com.mayasoft.test.controllers;
 
 import com.mayasoft.test.controllers.VO.EventVO;
 import com.mayasoft.test.models.entities.Event;
+import com.mayasoft.test.models.entities.Instructor;
 import com.mayasoft.test.services.EventService;
+import com.mayasoft.test.services.InstructorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,9 @@ public class EventController {
 
     @Autowired
     private EventService eventService;
+
+    @Autowired
+    private InstructorService instructorService;
 
     @GetMapping
     public ResponseEntity<List<EventVO>> getEvents () {
@@ -37,7 +42,10 @@ public class EventController {
 
     @PostMapping
     public ResponseEntity<String> saveEvent (@RequestBody EventVO eventVO){
-        Event event = new Event(eventVO.getStart(), eventVO.getEnd(), eventVO.getType(), eventVO.getType());
+        Instructor instructor = instructorService.getInstructorById(eventVO.getInstructorVO().getId());
+
+
+        Event event = new Event(eventVO.getStart(), eventVO.getEnd(), eventVO.getType(), eventVO.getType(), instructor);
         eventService.saveEvent(event);
 
         return ResponseEntity.noContent().build();

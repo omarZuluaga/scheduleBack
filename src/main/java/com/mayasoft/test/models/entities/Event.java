@@ -1,9 +1,8 @@
 package com.mayasoft.test.models.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.hibernate.annotations.Cascade;
+
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -18,13 +17,18 @@ public class Event {
     private String type;
     private String description;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Instructor instructor;
+
+
     public Event () {}
 
-    public Event(Date start, Date end, String type, String description) {
+    public Event(Date start, Date end, String type, String description, Instructor instructor) {
         this.start = start;
         this.end = end;
         this.type = type;
         this.description = description;
+        this.instructor = instructor;
     }
 
     public Long getId() {
@@ -65,5 +69,13 @@ public class Event {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Instructor getInstructor() {
+        return instructor;
+    }
+
+    public void setInstructor(Instructor instructor) {
+        this.instructor = instructor;
     }
 }

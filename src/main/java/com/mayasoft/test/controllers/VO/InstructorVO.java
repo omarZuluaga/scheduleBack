@@ -1,34 +1,22 @@
-package com.mayasoft.test.models.entities;
+package com.mayasoft.test.controllers.VO;
 
-import org.hibernate.annotations.Cascade;
+import com.mayasoft.test.models.entities.Event;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
-@Entity
-public class Instructor {
+public class InstructorVO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    @Column(name = "first_name")
     private String firstName;
-
-    @Column(name = "last_name")
     private String lastName;
-
     private Date birthday;
+    private List<EventVO> events;
 
-    @Cascade({org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST, org.hibernate.annotations.CascadeType.REFRESH})
-    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name="Event", referencedColumnName="id")
-    private List<Event> events;
+    public InstructorVO () {}
 
-    public Instructor () {}
-
-    public Instructor(String firstName, String lastName, Date birthday, List<Event> events) {
+    public InstructorVO(Long id, String firstName, String lastName, Date birthday, List<EventVO> events) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
@@ -67,11 +55,11 @@ public class Instructor {
         this.birthday = birthday;
     }
 
-    public List<Event> getEvents() {
+    public List<EventVO> getEvents() {
         return events;
     }
 
-    public void setEvents(List<Event> events) {
+    public void setEvents(List<EventVO> events) {
         this.events = events;
     }
 }

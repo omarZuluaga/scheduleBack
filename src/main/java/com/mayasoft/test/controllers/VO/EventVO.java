@@ -10,15 +10,17 @@ public class EventVO {
     private Date end;
     private String type;
     private String description;
+    private InstructorVO instructorVO;
 
     public EventVO() {}
 
-    public EventVO(Long id, Date start, Date end, String type, String description) {
+    public EventVO(Long id, Date start, Date end, String type, String description, InstructorVO instructorVO) {
         this.id = id;
         this.start = start;
         this.end = end;
         this.type = type;
         this.description = description;
+        this.instructorVO = instructorVO;
     }
 
     public Long getId() {
@@ -59,5 +61,13 @@ public class EventVO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public InstructorVO getInstructorVO() {
+        return instructorVO;
+    }
+
+    public void setInstructorVO(InstructorVO instructorVO) {
+        this.instructorVO = instructorVO;
     }
 }
