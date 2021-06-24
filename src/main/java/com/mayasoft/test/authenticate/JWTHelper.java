@@ -2,12 +2,12 @@ package com.mayasoft.test.authenticate;
 
 import com.mayasoft.test.models.entities.User;
 import com.sun.istack.NotNull;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.function.EntityResponse;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 public class JWTHelper {
     private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.RS512;
@@ -15,6 +15,26 @@ public class JWTHelper {
     private static final String CLAIM_TOKEN = "currentToken";
 
     private static String KEY = "L0R4T4D1N4";
+
+    public static void parseJWT(String token) {
+        try {
+            Claims claims = (Claims)Jwts.parser().setSigningKey(KEY).parseClaimsJws(token).getBody();
+            List<String> userRoles = new ArrayList();
+            String userRolesStr = (String)claims.get("roles");
+            if (userRolesStr != null && userRolesStr.length() > 2) {
+                userRolesStr = userRolesStr.substring(1, userRolesStr.length() - 1);
+                userRoles.addAll(Arrays.asList(userRolesStr.split(",")));
+            }
+
+        } catch (ExpiredJwtException var4) {
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token expired");
+        } catch (SignatureException var5) {
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Signature verification failed");
+        } catch (Exception var6) {
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not able to parse authentication token");
+        }
+
+    }
 
     public static String createJWT(@NotNull User user, Integer hours, String token) {
         JwtBuilder builder = null;
