@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping("events/")
 public class EventController {
 
     @Autowired
@@ -29,7 +30,7 @@ public class EventController {
         return ResponseEntity.ok().body(map(eventService.getEvents()));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("getEventById/{id}")
     public ResponseEntity<EventVO> getEventById (@PathVariable Long id) {
         Event event = eventService.getEventById(id);
 
@@ -40,7 +41,7 @@ public class EventController {
         return ResponseEntity.ok().body(map(event));
     }
 
-    @PostMapping
+    @PostMapping("saveEvent")
     public ResponseEntity<String> saveEvent (@RequestBody EventVO eventVO){
         Instructor instructor = instructorService.getInstructorById(eventVO.getInstructorVO().getId());
 
@@ -51,7 +52,7 @@ public class EventController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("updateEvent/{id}")
     public ResponseEntity<String> updateEvent(@PathVariable Long id, @RequestBody EventVO eventVO){
         Event event = eventService.getEventById(id);
 
@@ -67,7 +68,7 @@ public class EventController {
 
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("deleteEvent/{id}")
     public ResponseEntity<String> deleteEvent(@PathVariable Long id){
         eventService.deleteEvent(id);
 
