@@ -3,6 +3,7 @@ package com.mayasoft.test.models.entities;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class Instructor {
     @Cascade({org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST, org.hibernate.annotations.CascadeType.REFRESH})
     @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name="Event", referencedColumnName="id")
-    private List<Event> events;
+    private List<Event> events = new ArrayList<>();
 
     public Instructor () {}
 
@@ -33,6 +34,12 @@ public class Instructor {
         this.lastName = lastName;
         this.birthday = birthday;
         this.events = events;
+    }
+
+    public Instructor(String firstName, String lastName, Date birthday) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthday = birthday;
     }
 
     public Long getId() {

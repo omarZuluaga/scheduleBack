@@ -2,6 +2,7 @@ package com.mayasoft.test.controllers;
 
 import com.mayasoft.test.controllers.VO.EventVO;
 import com.mayasoft.test.controllers.VO.InstructorVO;
+import com.mayasoft.test.models.entities.Event;
 import com.mayasoft.test.models.entities.Instructor;
 import com.mayasoft.test.services.InstructorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class InstructorController {
         return ResponseEntity.ok().body(mapInstructors(instructorService.getInstructors()));
     }
 
-    @GetMapping("getInstructorById/{/id}")
+    @GetMapping("getInstructorById/{id}")
     public ResponseEntity<InstructorVO> getInstructorById(@PathVariable Long instructorId){
         Optional<InstructorVO> instructor = Optional.ofNullable(mapInstructor(instructorService.getInstructorById(instructorId)));
 
@@ -34,9 +35,52 @@ public class InstructorController {
     }
 
     @PostMapping("saveInstructor")
-    public ResponseEntity<String> saveInstructor(@RequestBody InstructorVO instructorVO){
+    public ResponseEntity<InstructorVO> saveInstructor(@RequestBody InstructorVO instructorVO){
 
-        //Optional.ofNullable(instructorVO).isPresent() ? return instructorService.saveInstructor(new Instructor(instructorVO.getFirstName()));
+        if(!Optional.ofNullable(instructorVO).isPresent()) return ResponseEntity.notFound().build();
+
+        Instructor instructor = new Instructor(instructorVO.getFirstName(), instructorVO.getLastName(),
+                instructorVO.getBirthday());
+
+        instructorVO.getEvents().forEach(eventVO -> {
+            instructor.getEvents().add(new Event(eventVO.getStart(), eventVO.getEnd(), eventVO.getType(), eventVO.getDescription(),
+                    instructor));
+        });
+
+
+        instructorService.saveInstructor(instructor);
+
+        instructorVO.setId(instructor.getId());
+
+        return ResponseEntity.ok().body(instructorVO);
+    }
+
+    @PutMapping("updateInstructor/{id}")
+    public ResponseEntity<InstructorVO> updateInstructor(@PathVariable Long instructorId, @RequestBody InstructorVO instructorVO){
+
+        Optional<Instructor> instructor = Optional.ofNullable(instructorService.getInstructorById(instructorId));
+
+        if(!instructor.isPresent()) return ResponseEntity.notFound().build();
+
+        instructor.get().setBirthday(instructorVO.getBirthday());
+        instructor.get().setFirstName(instructorVO.getFirstName());
+        instructor.get().setLastName(instructorVO.getLastName());
+
+        instructorService.saveInstructor(instructor.get());
+
+        instructorVO.setId(instructor.get().getId());
+
+        return ResponseEntity.ok().body(instructorVO);
+    }
+
+    @DeleteMapping("deleteMapping/{id}")
+    public ResponseEntity<String> deleteInstructor(@PathVariable Long instructorId) {
+
+        if(Optional.ofNullable(instructorService.getInstructorById(instructorId)).isPresent()) return ResponseEntity.notFound().build();
+
+        instructorService.deleteInstructor(instructorId);
+
+        return ResponseEntity.ok().body("Instructor deleted");
     }
 
     private List<InstructorVO> mapInstructors(List<Instructor> instructors) {
