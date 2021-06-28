@@ -1,5 +1,8 @@
 package com.mayasoft.test.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
@@ -17,18 +20,14 @@ public class Event {
     private String type;
     private String description;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Instructor instructor;
-
 
     public Event () {}
 
-    public Event(Date start, Date end, String type, String description, Instructor instructor) {
+    public Event(Date start, Date end, String type, String description) {
         this.start = start;
         this.end = end;
         this.type = type;
         this.description = description;
-        this.instructor = instructor;
     }
 
     public Long getId() {
@@ -69,13 +68,5 @@ public class Event {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Instructor getInstructor() {
-        return instructor;
-    }
-
-    public void setInstructor(Instructor instructor) {
-        this.instructor = instructor;
     }
 }
