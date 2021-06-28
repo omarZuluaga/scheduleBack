@@ -24,7 +24,8 @@ public class EventServiceImp implements EventService {
     @Override
     @Transactional(readOnly = true)
     public Event getEventById(Long id) {
-        return eventRepository.getById(id);
+      Event event = eventRepository.getById(id);
+      return event;
     }
 
     @Override

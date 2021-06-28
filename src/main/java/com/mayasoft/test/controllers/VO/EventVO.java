@@ -11,16 +11,16 @@ public class EventVO {
     private String type;
     private String description;
     private InstructorVO instructorVO;
+    private Long daysBetween;
 
     public EventVO() {}
 
-    public EventVO(Long id, Date start, Date end, String type, String description, InstructorVO instructorVO) {
+    public EventVO(Long id, Date start, Date end, String type, String description) {
         this.id = id;
         this.start = start;
         this.end = end;
         this.type = type;
         this.description = description;
-        this.instructorVO = instructorVO;
     }
 
     public Long getId() {
@@ -70,4 +70,12 @@ public class EventVO {
     public void setInstructorVO(InstructorVO instructorVO) {
         this.instructorVO = instructorVO;
     }
+
+  public Long getDaysBetween() {
+    return daysBetween;
+  }
+
+  public void setDaysBetween(Long daysBetween) {
+    this.daysBetween = daysBetween;
+  }
 }

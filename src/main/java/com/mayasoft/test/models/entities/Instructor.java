@@ -1,6 +1,7 @@
 package com.mayasoft.test.models.entities;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -22,9 +23,8 @@ public class Instructor {
 
     private Date birthday;
 
-    @Cascade({org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST, org.hibernate.annotations.CascadeType.REFRESH})
-    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name="Event", referencedColumnName="id")
+    @Cascade({CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true )
     private List<Event> events = new ArrayList<>();
 
     public Instructor () {}
