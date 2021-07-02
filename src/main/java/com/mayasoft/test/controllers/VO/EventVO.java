@@ -15,12 +15,13 @@ public class EventVO {
 
     public EventVO() {}
 
-    public EventVO(Long id, Date start, Date end, String type, String description) {
+    public EventVO(Long id, Date start, Date end, String type, String description, Long daysBetween) {
         this.id = id;
         this.start = start;
         this.end = end;
         this.type = type;
         this.description = description;
+        this.daysBetween = daysBetween;
     }
 
     public Long getId() {

@@ -12,6 +12,7 @@ public class InstructorVO {
     private String lastName;
     private Date birthday;
     private List<EventVO> events;
+    private Long overallEventsDuration;
 
     public InstructorVO () {}
 
@@ -61,5 +62,13 @@ public class InstructorVO {
 
     public void setEvents(List<EventVO> events) {
         this.events = events;
+    }
+
+    public Long getOverallEventsDuration() {
+        return overallEventsDuration;
+    }
+
+    public void setOverallEventsDuration(Long overallEventsDuration) {
+        this.overallEventsDuration = overallEventsDuration;
     }
 }

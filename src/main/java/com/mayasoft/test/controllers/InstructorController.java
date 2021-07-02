@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @CrossOrigin
@@ -44,6 +45,8 @@ public class InstructorController {
     @GetMapping("/{instructorId}")
     public ResponseEntity<InstructorVO> getInstructorById(@PathVariable Long instructorId){
         Optional<InstructorVO> instructor = Optional.ofNullable(mapInstructor(instructorService.getInstructorById(instructorId)));
+
+        instructor.get().setOverallEventsDuration(getOverallEventsDuration(instructor.get().getEvents()));
 
         return new ResponseEntity<>(instructor.get(), HttpStatus.OK);
     }
@@ -146,7 +149,7 @@ public class InstructorController {
   }
 
   @PostMapping("/{instructorId}/events")
-  public ResponseEntity<EventVO> saveEvent (@PathVariable Long instructorId, @RequestBody EventVO eventVO) throws ParseException {
+  public ResponseEntity<?> saveEvent (@PathVariable Long instructorId, @RequestBody EventVO eventVO) {
 
     Instructor instructor = isInstructor(instructorId);
 
@@ -155,6 +158,13 @@ public class InstructorController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
+    if(eventVO.getStart().after(eventVO.getEnd())){
+        return ResponseEntity.badRequest().body("the start date cannot be greater than end date");
+    }
+
+    if(getDaysBetween(eventVO.getStart(), eventVO.getEnd()) > 7){
+        return ResponseEntity.badRequest().body("The event cannot last more than a week (7 days)");
+    }
 
     Event event = new Event(eventVO.getStart(), eventVO.getEnd(), eventVO.getType(),
       Optional.ofNullable(eventVO.getDescription()).isPresent() ? eventVO.getDescription() : "");
@@ -208,12 +218,8 @@ public class InstructorController {
     eventVO.setStart(event.getStart());
     eventVO.setEnd(event.getEnd());
     eventVO.setType(event.getType());
-    try {
-      eventVO.setDaysBetween(getDaysBetween(event.getStart(), event.getEnd()));
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
-    return eventVO;
+    eventVO.setDaysBetween(getDaysBetween(event.getStart(), event.getEnd()));
+      return eventVO;
   }
 
   private List<EventVO> mapEvents(List<Event> events) {
@@ -225,15 +231,28 @@ public class InstructorController {
     return eventVOS;
   }
 
-  private Long getDaysBetween(Date start, Date end) throws ParseException {
-    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
-    String startString = sdf.format(start);
-    String endString = sdf.format(end);
-    Date startDate = sdf.parse(startString);
-    System.out.println(startDate);
-    Date endDate = sdf.parse(endString);
+  private Long getDaysBetween(Date start, Date end) {
+    try {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+        Date startDate = sdf.parse(sdf.format(start));
+        System.out.println(startDate);
+        Date endDate = sdf.parse(sdf.format(end));
 
-    return ChronoUnit.DAYS.between(startDate.toInstant(), endDate.toInstant());
+        return ChronoUnit.DAYS.between(startDate.toInstant(), endDate.toInstant());
+    }catch (ParseException e){
+        e.printStackTrace();
+    }
+    return null;
+  }
+
+  private Long getOverallEventsDuration(List<EventVO> eventVOS){
+        AtomicReference<Long> overallDuration = new AtomicReference<>(0L);
+
+        eventVOS.forEach(eventVO -> {
+            overallDuration.updateAndGet(v -> v + eventVO.getDaysBetween());
+        });
+
+        return overallDuration.get();
   }
 
     private List<InstructorVO> mapInstructors(List<Instructor> instructors) {
@@ -255,7 +274,7 @@ public class InstructorController {
         instructorVO.setEvents(instructor.getEvents()
         .stream()
         .map(event -> new EventVO(event.getId(), event.getStart(), event.getEnd(),
-          event.getType(), event.getDescription())).collect(Collectors.toList()));
+          event.getType(), event.getDescription(), getDaysBetween(event.getStart(), event.getEnd()))).collect(Collectors.toList()));
         return instructorVO;
     }
 
