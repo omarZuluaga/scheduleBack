@@ -1,7 +1,5 @@
 package com.mayasoft.test.controllers.VO;
 
-import com.mayasoft.test.models.entities.Event;
-
 import java.util.Date;
 import java.util.List;
 

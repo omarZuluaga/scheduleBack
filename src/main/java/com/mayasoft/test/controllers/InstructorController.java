@@ -96,7 +96,7 @@ public class InstructorController {
     }
 
   @DeleteMapping("/{instructorId}/events/{eventId}")
-  public ResponseEntity<String> deleteEvent(@PathVariable Long instructorId, @PathVariable Long eventId){
+  public ResponseEntity<InstructorVO> deleteEvent(@PathVariable Long instructorId, @PathVariable Long eventId){
 
       Instructor instructor = isInstructor(instructorId);
 
@@ -114,17 +114,14 @@ public class InstructorController {
       }
 
       instructor.getEvents().remove(event.get());
-
       instructorService.updateInstructor(instructor);
-
-      return ResponseEntity.status(HttpStatus.OK).build();
+      return ResponseEntity.ok().body(mapInstructor(instructor));
   }
 
   @GetMapping("/{instructorId}/events")
   public ResponseEntity<List<EventVO>> getEvents (@PathVariable Long instructorId) {
 
       Instructor instructor = isInstructor(instructorId);
-
       return ResponseEntity.ok().body(mapEvents(instructor.getEvents()));
   }
 
@@ -171,6 +168,7 @@ public class InstructorController {
     eventService.saveEvent(event);
 
     eventVO.setId(event.getId());
+    eventVO.setDaysBetween(getDaysBetween(eventVO.getStart(), eventVO.getEnd()));
 
     instructor.getEvents().add(event);
 
@@ -275,6 +273,8 @@ public class InstructorController {
         .stream()
         .map(event -> new EventVO(event.getId(), event.getStart(), event.getEnd(),
           event.getType(), event.getDescription(), getDaysBetween(event.getStart(), event.getEnd()))).collect(Collectors.toList()));
+        instructorVO.setOverallEventsDuration(getOverallEventsDuration(mapEvents(instructor.getEvents())));
+        System.out.println(instructorVO.getOverallEventsDuration());
         return instructorVO;
     }
 
